@@ -1,0 +1,34 @@
+WARDING TRIAL: Project Notes (raw facts for documentation)
+GitHub: https://github.com/Max-dot668/WardingTrial
+
+== Mission 1: Project setup ==
+- Unity 6.3 LTS (6000.3.23f1), Universal 2D template (URP 2D Renderer, needed for Light 2D)
+- Folders: Arts (Player, Environment), Input, Materials, Prefabs, Scenes, Scripts, Settings, Tiles
+- Scenes: MainMenu (build index 0), Game (build index 1). Both in Build Profiles > Scene List
+- Art: 16x16 DungeonTileset II by 0x72 (CC0), individual frames from its "frames" folder
+    - Arts/Player: wizzard_f idle (4), run (4), hit (1)
+    - Arts/Environment: floor_1 to floor_8 and all wall_* sprites (55 total)
+    - Import settings: Sprite (2D and UI), Single, Pixels Per Unit 16, Point (no filter), Compression None
+- Git: .gitignore ignores Library/, Temp/, Obj/, Logs/, UserSettings/, Build/, .vscode/, *.slnx
+- Pushed to public GitHub repo
+
+== Mission 2: The apprentice moves (Requirement 2) ==
+- Player (Game scene), position (0,0,0). Components:
+    - SpriteRenderer: wizzard_f_idle_anim_f0
+    - Rigidbody2D: Dynamic, Gravity Scale 0, Freeze Rotation Z
+    - BoxCollider2D: size 0.8 x 0.4, offset (0, -0.675), feet only (top-down: feet decide where a character stands)
+    - PlayerInput: Actions = PlayerControls, Default Map = Player, Behavior = Send Messages
+    - PlayerMovement (script)
+- Assets/Input/PlayerControls.inputactions:
+    - Action map "Player" > action "Move" (Value, Vector2)
+    - Bindings: WASD and arrow keys (2D Vector composites, Digital Normalized)
+- Assets/Scripts/PlayerMovement.cs:
+    - [RequireComponent(typeof(Rigidbody2D))]
+    - [SerializeField] private float speed = 4
+    - Awake: caches Rigidbody2D with GetComponent
+    - OnMove(InputValue): stores the Vector2 input (called by PlayerInput via Send Messages)
+    - FixedUpdate: rb.linearVelocity = moveInput * speed (velocity = units per second, so no Time.deltaTime)
+
+== AI use (for disclosure) ==
+- AI tutor (Claude) for explanations, step-by-step guidance and code review. All code written by me.
+- Documentation to be drafted with AI from these notes and my final scripts, then reviewed by me.
