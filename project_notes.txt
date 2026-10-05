@@ -32,3 +32,15 @@ GitHub: https://github.com/Max-dot668/WardingTrial
 == AI use (for disclosure) ==
 - AI tutor (Claude) for explanations, step-by-step guidance and code review. All code written by me.
 - Documentation to be drafted with AI from these notes and my final scripts, then reviewed by me.
+
+== Mission 3: The trial hall (Requirement 3) ==
+- Grid (cell size 1x1) with two child Tilemaps:
+    - Floor: Tilemap + Tilemap Renderer (Order in Layer 0). floor_1 base, floor_2-8 cracks sprinkled. No collider.
+    - Walls: Tilemap + Tilemap Renderer (Order in Layer 1) + Tilemap Collider 2D
+        - top 2 rows: wall_top_* cap + wall_left/mid/right brick face, 2x wall_banner_blue
+        - sides: wall_edge_mid_left / wall_edge_mid_right; bottom: wall_edge_bottom_left/right + wall_top_mid
+- Room: 12 tiles wide x 10 tall; Floor fills everything except the top 2 rows
+- Tile palette: Assets/Tiles/TrialHall (19 tiles: 8 floor, 10 wall, 1 banner)
+- Player Sprite Renderer Order in Layer 2 (drawn above floor and walls)
+- Main Camera: orthographic, Size 5.5, solid background #0B0B12; Game view Full HD 1920x1080
+- Verified: player stops at all four walls; feet collider lets head overlap the north wall
