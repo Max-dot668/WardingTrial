@@ -11,10 +11,16 @@ public class BoltPool : MonoBehaviour
     {
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject bolt = Instantiate(boltPrefab, transform);
-            bolt.SetActive(false);
-            bolts.Add(bolt);
+            CreateBolt();
         }
+    }
+
+    private GameObject CreateBolt()
+    {
+        GameObject bolt = Instantiate(boltPrefab, transform);
+        bolt.SetActive(false);
+        bolts.Add(bolt);
+        return bolt;
     }
 
     public GameObject GetBolt(Vector3 position, Quaternion rotation)
@@ -24,11 +30,15 @@ public class BoltPool : MonoBehaviour
             GameObject bolt = bolts[i];
             if (!bolt.activeInHierarchy)
             {
-                bolt.transform.SetPositionAndRotation(position, rotation);
-                bolt.SetActive(true);
-                return bolt;
+                return Launch(bolt, position, rotation);
             }
         }
-        return null;
+        return Launch(CreateBolt(), position, rotation);
+    }
+    private GameObject Launch(GameObject bolt, Vector3 position, Quaternion rotation)
+    {
+        bolt.transform.SetPositionAndRotation(position, rotation);
+        bolt.SetActive(true);
+        return bolt;
     }
 }

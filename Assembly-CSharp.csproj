@@ -49,6 +49,7 @@
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets/Scripts/StatueCaster.cs" />
     <Compile Include="Assets/Scripts/SpellBolt.cs" />
     <Compile Include="Assets/Scripts/PlayerMovement.cs" />
     <Compile Include="Assets/Scripts/BoltPool.cs" />
