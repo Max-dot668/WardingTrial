@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/SpellBolt.cs" />
     <Compile Include="Assets/Scripts/PlayerMovement.cs" />
+    <Compile Include="Assets/Scripts/BoltPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
