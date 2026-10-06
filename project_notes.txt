@@ -60,3 +60,15 @@ GitHub: https://github.com/Max-dot668/WardingTrial
 - Verified: Play shows 20 inactive SpellBolt(Clone) children under BoltPool
 - Debugging note: a stray Rigidbody2D on Grid made the whole hall fall; found via
   Rigidbody2D Info > Contacts; removed before commit
+
+  Mission 4 - Statues and pooled spell bolts
+- SpellBolt prefab: circle sprite tinted #B07CFF, scale 0.35, Order in Layer 3, Rigidbody2D (Dynamic, gravity 0, Collision Detection Continuous), CircleCollider2D set to trigger
+- SpellBolt.cs: OnEnable sets velocity along transform.right and resets a lifetime timer; Update counts the timer down and deactivates the bolt after 3 s; OnDisable zeroes velocity
+- BoltPool.cs: creates 20 inactive bolts in Awake as children of the pool; GetBolt returns the first inactive one and sets position and rotation before SetActive(true), because OnEnable launches the bolt; if all are busy it creates a new bolt (pool grows)
+- Why pooling: avoids Instantiate/Destroy every shot, which causes garbage collection and frame hitches
+- StatueCaster.cs: countdown timer with a start delay and fire interval; asks BoltPool for a bolt at its FirePoint
+- FirePoint child carries the aim (rotation Z) so the statue sprite stays upright
+- 4 statues (Top_Left, Top_Right, Left, Right) from one Statue prefab; FirePoint rotations -90 / -90 / 0 / 180; staggered start delays 1 / 1.75 / 1.4 / 2.1 so they don't fire on the same beat
+- Bug found: a Rigidbody2D accidentally added to Grid made the whole hall fall; found using Rigidbody2D Info > Contacts; removed
+- Bug found: all statues fired left because FirePoint rotation 180 was applied to the prefab; fixed by setting each FirePoint's rotation as a per-instance override in the Hierarchy
+- Git: stopped tracking Unity-generated .csproj files and added *.csproj to .gitignore
