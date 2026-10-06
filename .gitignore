@@ -6,3 +6,4 @@ UserSettings/
 Build/
 .vscode/
 *.slnx
+*.csproj
