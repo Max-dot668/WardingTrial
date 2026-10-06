@@ -44,3 +44,19 @@ GitHub: https://github.com/Max-dot668/WardingTrial
 - Player Sprite Renderer Order in Layer 2 (drawn above floor and walls)
 - Main Camera: orthographic, Size 5.5, solid background #0B0B12; Game view Full HD 1920x1080
 - Verified: player stops at all four walls; feet collider lets head overlap the north wall
+
+== Mission 4: Spell bolts (Requirement 4) — in progress ==
+- Arts/BoltCircle: Unity built-in circle sprite (placeholder bolt art)
+- Prefabs/SpellBolt: SpriteRenderer (color #B07CFF, scale 0.35, Order in Layer 3),
+  Rigidbody2D (Dynamic, Gravity 0, Collision Detection Continuous),
+  CircleCollider2D (Is Trigger), SpellBolt.cs
+- SpellBolt.cs: [RequireComponent(Rigidbody2D)]; speed 5, lifetime 3 (serialized);
+  OnEnable resets timer + sets linearVelocity = transform.right * speed (launch per reuse);
+  Update counts down with Time.deltaTime, SetActive(false) when done (no Destroy);
+  OnDisable zeroes velocity
+- BoltPool (GameObject at 0,0,0) + BoltPool.cs: List<GameObject> bolts; Awake instantiates
+  poolSize (20) bolts as children, inactive; GetBolt(position, rotation) finds first inactive,
+  sets position/rotation BEFORE SetActive(true) (OnEnable launches using current rotation), returns it
+- Verified: Play shows 20 inactive SpellBolt(Clone) children under BoltPool
+- Debugging note: a stray Rigidbody2D on Grid made the whole hall fall; found via
+  Rigidbody2D Info > Contacts; removed before commit
