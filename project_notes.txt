@@ -72,3 +72,11 @@ GitHub: https://github.com/Max-dot668/WardingTrial
 - Bug found: a Rigidbody2D accidentally added to Grid made the whole hall fall; found using Rigidbody2D Info > Contacts; removed
 - Bug found: all statues fired left because FirePoint rotation 180 was applied to the prefab; fixed by setting each FirePoint's rotation as a per-instance override in the Hierarchy
 - Git: stopped tracking Unity-generated .csproj files and added *.csproj to .gitignore
+
+Mission 5 - Collisions (R5)
+- Bolt layer; Bolt x Bolt unchecked in the Physics 2D Layer Collision Matrix so bolts pass through each other
+- SpellBolt.cs: OnTriggerEnter2D deactivates the bolt (returns it to the pool) when it touches a wall or the wizard
+- SpellBolt prefab tagged "Bolt"
+- PlayerHit.cs on the Player: OnTriggerEnter2D checks CompareTag("Bolt") and calls TrialManager.EndTrial()
+- Why the player detects the hit: the bolt is a prefab and can't reference the scene's TrialManager; the Player can, via a SerializeField slot
+- TrialManager.cs: EndTrial sets Time.timeScale = 0 to freeze the game; a trialOver bool stops it running twice; OnDestroy resets timeScale to 1 so the next scene isn't frozen

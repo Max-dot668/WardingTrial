@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 1354860413290477354}
   - component: {fileID: 7339908406926732220}
   - component: {fileID: 5153065357699785177}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: SpellBolt
-  m_TagString: Untagged
+  m_TagString: Bolt
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

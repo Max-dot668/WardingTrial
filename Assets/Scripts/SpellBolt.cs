@@ -28,6 +28,11 @@ public class SpellBolt : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        gameObject.SetActive(false);
+    }
+
     private void OnDisable()
     {
         rb.linearVelocity = Vector2.zero;
