@@ -103,3 +103,9 @@ Mission 8 - Pause menu (R6)
 - TrialManager.IsTrialOver() lets PauseManager refuse to pause after a hit, so Escape can't unfreeze a finished trial
 - Menu while paused works because TrialManager.OnDestroy resets timeScale
 - Lesson learned: changes made during Play mode are lost when Play stops
+
+Mission 9 - Best time (R7)
+- PlayerPrefs stores the best survival time under the key "BestTime" (a const string in both scripts to avoid typos)
+- TrialManager.EndTrial reads the saved best (default 0); if this run beats it, saves with SetFloat + Save and shows "New best!"
+- MainMenu.Start reads the best and shows "Best: X s", or "No trial attempted yet" when nothing is saved
+- Tested: record persists after stopping Play; Edit > Clear All PlayerPrefs resets it
