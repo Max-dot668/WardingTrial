@@ -43,6 +43,11 @@ public class TrialManager : MonoBehaviour
         SceneManager.LoadScene(menuSceneName);
     }
 
+    public bool IsTrialOver()
+    {
+        return trialOver;
+    }
+
     private void OnDestroy()
     {
         Time.timeScale = 1f;
