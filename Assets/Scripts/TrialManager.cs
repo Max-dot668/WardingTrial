@@ -4,6 +4,8 @@ using TMPro;
 
 public class TrialManager : MonoBehaviour
 {
+    private const string BestTimeKey = "BestTime";
+
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private GameObject failPanel;
     [SerializeField] private TMP_Text resultText;
@@ -29,8 +31,19 @@ public class TrialManager : MonoBehaviour
         }
         trialOver = true;
         Time.timeScale = 0f;
-        resultText.text = "You lasted " + survivalTime.ToString("F1") + " s";
         failPanel.SetActive(true);
+
+        float bestTime = PlayerPrefs.GetFloat(BestTimeKey, 0f);
+        if (survivalTime > bestTime)
+        {
+            PlayerPrefs.SetFloat(BestTimeKey, survivalTime);
+            PlayerPrefs.Save();
+            resultText.text = "New best! You lasted " + survivalTime.ToString("F1") + " s";
+        }
+        else
+        {
+            resultText.text = "You lasted " + survivalTime.ToString("F1") + " s";
+        }
     }
 
     public void Retry()
