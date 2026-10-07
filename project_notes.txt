@@ -88,3 +88,10 @@ Mission 6 - Timer and fail screen
 - EndTrial freezes time, writes the result and shows the panel
 - Retry reloads the active scene; OnDestroy resets Time.timeScale so the reloaded scene isn't frozen
 - Learned: the Scene view draws an Overlay canvas at 1 pixel = 1 unit, so judge UI in the Game view
+
+Mission 7 - Main menu (R1)
+- MainMenu scene (index 0): title, subtitle, Begin Trial and Quit buttons; same Canvas Scaler settings and colors as the Game scene
+- MainMenu.cs on a MenuManager object: BeginTrial loads the "Game" scene, QuitGame calls Application.Quit (only works in a build, ignored in the Editor)
+- TrialManager.ReturnToMenu loads "MainMenu"; scene names are SerializeFields so they can be fixed in the Inspector
+- Fail panel now has Retry and Menu buttons (duplicated button had to be re-wired, since duplicates copy On Click)
+- Tested: menu -> trial -> hit -> Menu -> Begin Trial again runs unfrozen, because TrialManager.OnDestroy resets Time.timeScale
