@@ -7,6 +7,7 @@ public class TrialManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private GameObject failPanel;
     [SerializeField] private TMP_Text resultText;
+    [SerializeField] private string menuSceneName = "MainMenu";
     private float survivalTime;
     private bool trialOver;
 
@@ -35,6 +36,11 @@ public class TrialManager : MonoBehaviour
     public void Retry()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(menuSceneName);
     }
 
     private void OnDestroy()
