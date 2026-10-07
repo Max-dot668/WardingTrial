@@ -95,3 +95,11 @@ Mission 7 - Main menu (R1)
 - TrialManager.ReturnToMenu loads "MainMenu"; scene names are SerializeFields so they can be fixed in the Inspector
 - Fail panel now has Retry and Menu buttons (duplicated button had to be re-wired, since duplicates copy On Click)
 - Tested: menu -> trial -> hit -> Menu -> Begin Trial again runs unfrozen, because TrialManager.OnDestroy resets Time.timeScale
+
+Mission 8 - Pause menu (R6)
+- PausePanel (duplicated from FailPanel for a matching look): "Paused", Resume and Menu buttons, hidden by default
+- PauseManager.cs: Escape (Keyboard.current.escapeKey.wasPressedThisFrame) toggles Pause/Resume in Update, which still runs while timeScale is 0
+- Pause shows the panel and sets timeScale 0; Resume hides it and sets timeScale 1; the survival timer stops while paused because deltaTime is 0
+- TrialManager.IsTrialOver() lets PauseManager refuse to pause after a hit, so Escape can't unfreeze a finished trial
+- Menu while paused works because TrialManager.OnDestroy resets timeScale
+- Lesson learned: changes made during Play mode are lost when Play stops
