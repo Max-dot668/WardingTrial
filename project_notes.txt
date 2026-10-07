@@ -109,3 +109,12 @@ Mission 9 - Best time (R7)
 - TrialManager.EndTrial reads the saved best (default 0); if this run beats it, saves with SetFloat + Save and shows "New best!"
 - MainMenu.Start reads the best and shows "Best: X s", or "No trial attempted yet" when nothing is saved
 - Tested: record persists after stopping Play; Edit > Clear All PlayerPrefs resets it
+
+Mission 10 - Lighting (R8)
+- Global Light 2D dimmed to intensity 0.35 with a cool blue color (#9AA0D8) for a moody, moonlit hall
+- SpellBolt prefab: child Spot Light 2D (BoltGlow, violet #B07CFF) so every pooled bolt lights the floor as it flies; inactive bolts' lights switch off with them
+- SpellBolt sprite uses Sprite-Unlit-Default so the bolt itself stays bright in the dark (unlit ignores lights)
+- Player: child Spot Light 2D (WizardLight, warm #FFD8A0) so the wizard stays visible
+- Kept the default light radius because it looked better in testing (design choice)
+- Bug found: first added 3D Spot Lights by mistake; the 2D Renderer ignores 3D lights, so replaced them with Light 2D components
+- UI is unaffected because the Overlay canvas ignores scene lights
