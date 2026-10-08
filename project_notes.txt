@@ -1,39 +1,36 @@
 WARDING TRIAL: Project Notes (raw facts for documentation)
+Maximiliano You - CPSC 386, Class Project 1
 GitHub: https://github.com/Max-dot668/WardingTrial
 
 == Mission 1: Project setup ==
 - Unity 6.3 LTS (6000.3.23f1), Universal 2D template (URP 2D Renderer, needed for Light 2D)
 - Folders: Arts (Player, Environment), Input, Materials, Prefabs, Scenes, Scripts, Settings, Tiles
 - Scenes: MainMenu (build index 0), Game (build index 1). Both in Build Profiles > Scene List
-- Art: 16x16 DungeonTileset II by 0x72 (CC0), individual frames from its "frames" folder
-    - Arts/Player: wizzard_f idle (4), run (4), hit (1)
-    - Arts/Environment: floor_1 to floor_8 and all wall_* sprites (55 total)
+- Art: 16x16 DungeonTileset II v1.7 by 0x72 (CC0), individual frames from its "frames" folder
+    - Arts/Player: wizzard_f frames (the idle frame is used as the player sprite)
+    - Arts/Environment: floor_1 to floor_8, wall_* sprites, angel_idle_anim_f0 (statue)
     - Import settings: Sprite (2D and UI), Single, Pixels Per Unit 16, Point (no filter), Compression None
-- Git: .gitignore ignores Library/, Temp/, Obj/, Logs/, UserSettings/, Build/, .vscode/, *.slnx
+- Git: .gitignore ignores Library/, Temp/, Obj/, Logs/, UserSettings/, Build/, .vscode/, *.slnx, *.csproj, mono_crash.*
 - Pushed to public GitHub repo
 
-== Mission 2: The apprentice moves (Requirement 2) ==
+== Mission 2: The apprentice moves (R2) ==
 - Player (Game scene), position (0,0,0). Components:
-    - SpriteRenderer: wizzard_f_idle_anim_f0
+    - SpriteRenderer: wizzard_f_idle_anim_f0, Order in Layer 2
     - Rigidbody2D: Dynamic, Gravity Scale 0, Freeze Rotation Z
     - BoxCollider2D: size 0.8 x 0.4, offset (0, -0.675), feet only (top-down: feet decide where a character stands)
     - PlayerInput: Actions = PlayerControls, Default Map = Player, Behavior = Send Messages
-    - PlayerMovement (script)
+    - PlayerMovement, PlayerHit (scripts)
 - Assets/Input/PlayerControls.inputactions:
     - Action map "Player" > action "Move" (Value, Vector2)
     - Bindings: WASD and arrow keys (2D Vector composites, Digital Normalized)
-- Assets/Scripts/PlayerMovement.cs:
-    - [RequireComponent(typeof(Rigidbody2D))]
-    - [SerializeField] private float speed = 4
+- PlayerMovement.cs:
+    - [RequireComponent(typeof(Rigidbody2D))], [SerializeField] private float speed = 4
     - Awake: caches Rigidbody2D with GetComponent
     - OnMove(InputValue): stores the Vector2 input (called by PlayerInput via Send Messages)
     - FixedUpdate: rb.linearVelocity = moveInput * speed (velocity = units per second, so no Time.deltaTime)
+- No old Input.GetKey anywhere in the project
 
-== AI use (for disclosure) ==
-- AI tutor (Claude) for explanations, step-by-step guidance and code review. All code written by me.
-- Documentation to be drafted with AI from these notes and my final scripts, then reviewed by me.
-
-== Mission 3: The trial hall (Requirement 3) ==
+== Mission 3: The trial hall (R3) ==
 - Grid (cell size 1x1) with two child Tilemaps:
     - Floor: Tilemap + Tilemap Renderer (Order in Layer 0). floor_1 base, floor_2-8 cracks sprinkled. No collider.
     - Walls: Tilemap + Tilemap Renderer (Order in Layer 1) + Tilemap Collider 2D
@@ -41,62 +38,54 @@ GitHub: https://github.com/Max-dot668/WardingTrial
         - sides: wall_edge_mid_left / wall_edge_mid_right; bottom: wall_edge_bottom_left/right + wall_top_mid
 - Room: 12 tiles wide x 10 tall; Floor fills everything except the top 2 rows
 - Tile palette: Assets/Tiles/TrialHall (19 tiles: 8 floor, 10 wall, 1 banner)
-- Player Sprite Renderer Order in Layer 2 (drawn above floor and walls)
 - Main Camera: orthographic, Size 5.5, solid background #0B0B12; Game view Full HD 1920x1080
-- Verified: player stops at all four walls; feet collider lets head overlap the north wall
+- Verified: player stops at all four walls; feet collider lets the head overlap the north wall
 
-== Mission 4: Spell bolts (Requirement 4) — in progress ==
-- Arts/BoltCircle: Unity built-in circle sprite (placeholder bolt art)
-- Prefabs/SpellBolt: SpriteRenderer (color #B07CFF, scale 0.35, Order in Layer 3),
-  Rigidbody2D (Dynamic, Gravity 0, Collision Detection Continuous),
-  CircleCollider2D (Is Trigger), SpellBolt.cs
-- SpellBolt.cs: [RequireComponent(Rigidbody2D)]; speed 5, lifetime 3 (serialized);
-  OnEnable resets timer + sets linearVelocity = transform.right * speed (launch per reuse);
-  Update counts down with Time.deltaTime, SetActive(false) when done (no Destroy);
-  OnDisable zeroes velocity
-- BoltPool (GameObject at 0,0,0) + BoltPool.cs: List<GameObject> bolts; Awake instantiates
-  poolSize (20) bolts as children, inactive; GetBolt(position, rotation) finds first inactive,
-  sets position/rotation BEFORE SetActive(true) (OnEnable launches using current rotation), returns it
-- Verified: Play shows 20 inactive SpellBolt(Clone) children under BoltPool
-- Debugging note: a stray Rigidbody2D on Grid made the whole hall fall; found via
-  Rigidbody2D Info > Contacts; removed before commit
-
-  Mission 4 - Statues and pooled spell bolts
-- SpellBolt prefab: circle sprite tinted #B07CFF, scale 0.35, Order in Layer 3, Rigidbody2D (Dynamic, gravity 0, Collision Detection Continuous), CircleCollider2D set to trigger
-- SpellBolt.cs: OnEnable sets velocity along transform.right and resets a lifetime timer; Update counts the timer down and deactivates the bolt after 3 s; OnDisable zeroes velocity
-- BoltPool.cs: creates 20 inactive bolts in Awake as children of the pool; GetBolt returns the first inactive one and sets position and rotation before SetActive(true), because OnEnable launches the bolt; if all are busy it creates a new bolt (pool grows)
+== Mission 4: Statues and pooled spell bolts (R4) ==
+- Prefabs/SpellBolt: Unity built-in circle sprite tinted #B07CFF, scale 0.35, Order in Layer 3,
+  Rigidbody2D (Dynamic, gravity 0, Collision Detection Continuous), CircleCollider2D (Is Trigger), SpellBolt.cs
+- SpellBolt.cs: speed 5, lifetime 3 (serialized); OnEnable resets the lifetime timer and sets
+  linearVelocity = transform.right * speed (launch on every reuse); Update counts down with Time.deltaTime and
+  calls SetActive(false) when done (never Destroy); OnDisable zeroes velocity
+- BoltPool (GameObject at 0,0,0) + BoltPool.cs: List<GameObject>; Awake instantiates poolSize (20) bolts as
+  inactive children; GetBolt(position, rotation) finds the first inactive bolt and sets position/rotation
+  BEFORE SetActive(true), because OnEnable launches using the current rotation
+- Pool size is fixed: if all 20 are busy, GetBolt returns null and the statue skips that shot (no Instantiate
+  after setup). In practice about 8 bolts are in flight at most.
 - Why pooling: avoids Instantiate/Destroy every shot, which causes garbage collection and frame hitches
-- StatueCaster.cs: countdown timer with a start delay and fire interval; asks BoltPool for a bolt at its FirePoint
+- Grader check: expand BoltPool in the Hierarchy during Play; it always holds exactly 20 SpellBolt(Clone) children
+- StatueCaster.cs: countdown timer with a start delay and a 1.5 s fire interval; asks BoltPool for a bolt at its FirePoint
 - FirePoint child carries the aim (rotation Z) so the statue sprite stays upright
-- 4 statues (Top_Left, Top_Right, Left, Right) from one Statue prefab; FirePoint rotations -90 / -90 / 0 / 180; staggered start delays 1 / 1.75 / 1.4 / 2.1 so they don't fire on the same beat
+- 4 statues (Top_Left, Top_Right, Left, Right) from one statue prefab (angel sprite, Order in Layer 2);
+  FirePoint rotations -90 / -90 / 0 / 180; staggered start delays 1 / 1.75 / 1.4 / 2.1 so they don't fire on the same beat
 - Bug found: a Rigidbody2D accidentally added to Grid made the whole hall fall; found using Rigidbody2D Info > Contacts; removed
-- Bug found: all statues fired left because FirePoint rotation 180 was applied to the prefab; fixed by setting each FirePoint's rotation as a per-instance override in the Hierarchy
-- Git: stopped tracking Unity-generated .csproj files and added *.csproj to .gitignore
+- Bug found: all statues fired left because FirePoint rotation 180 was applied to the prefab; fixed by setting
+  each FirePoint's rotation as a per-instance override in the Hierarchy
 
-Mission 5 - Collisions (R5)
+== Mission 5: Collisions (R5) ==
 - Bolt layer; Bolt x Bolt unchecked in the Physics 2D Layer Collision Matrix so bolts pass through each other
 - SpellBolt.cs: OnTriggerEnter2D deactivates the bolt (returns it to the pool) when it touches a wall or the wizard
 - SpellBolt prefab tagged "Bolt"
 - PlayerHit.cs on the Player: OnTriggerEnter2D checks CompareTag("Bolt") and calls TrialManager.EndTrial()
 - Why the player detects the hit: the bolt is a prefab and can't reference the scene's TrialManager; the Player can, via a SerializeField slot
-- TrialManager.cs: EndTrial sets Time.timeScale = 0 to freeze the game; a trialOver bool stops it running twice; OnDestroy resets timeScale to 1 so the next scene isn't frozen
+- TrialManager.EndTrial sets Time.timeScale = 0 to freeze the game; a trialOver bool stops it running twice
 
-Mission 6 - Timer and fail screen
+== Mission 6: Timer and fail screen ==
 - Canvas (Screen Space - Overlay, Canvas Scaler: Scale With Screen Size 1920x1080, match 0.5) so UI keeps its size in any window
 - TimerText (TextMeshPro) at top center; TrialManager adds Time.deltaTime each frame and shows it with ToString("F1")
-- FailPanel (dark, hidden by default) with "Trial Failed", "You lasted X s" and a Retry button
+- FailPanel (dark, hidden by default): "Trial Failed", "You lasted X s", Retry and Menu buttons
 - EndTrial freezes time, writes the result and shows the panel
-- Retry reloads the active scene; OnDestroy resets Time.timeScale so the reloaded scene isn't frozen
+- Retry reloads the active scene; TrialManager.OnDestroy resets Time.timeScale so the reloaded scene isn't frozen
 - Learned: the Scene view draws an Overlay canvas at 1 pixel = 1 unit, so judge UI in the Game view
 
-Mission 7 - Main menu (R1)
-- MainMenu scene (index 0): title, subtitle, Begin Trial and Quit buttons; same Canvas Scaler settings and colors as the Game scene
-- MainMenu.cs on a MenuManager object: BeginTrial loads the "Game" scene, QuitGame calls Application.Quit (only works in a build, ignored in the Editor)
+== Mission 7: Main menu (R1) ==
+- MainMenu scene (index 0): title, subtitle, best-time text, Begin Trial and Quit buttons; same Canvas Scaler settings and colors as the Game scene
+- MainMenu.cs on a MenuManager object: BeginTrial loads "Game"; QuitGame calls Application.Quit (only works in a build, ignored in the Editor)
 - TrialManager.ReturnToMenu loads "MainMenu"; scene names are SerializeFields so they can be fixed in the Inspector
-- Fail panel now has Retry and Menu buttons (duplicated button had to be re-wired, since duplicates copy On Click)
+- Duplicated buttons had to be re-wired, since duplicates copy their On Click
 - Tested: menu -> trial -> hit -> Menu -> Begin Trial again runs unfrozen, because TrialManager.OnDestroy resets Time.timeScale
 
-Mission 8 - Pause menu (R6)
+== Mission 8: Pause menu (R6) ==
 - PausePanel (duplicated from FailPanel for a matching look): "Paused", Resume and Menu buttons, hidden by default
 - PauseManager.cs: Escape (Keyboard.current.escapeKey.wasPressedThisFrame) toggles Pause/Resume in Update, which still runs while timeScale is 0
 - Pause shows the panel and sets timeScale 0; Resume hides it and sets timeScale 1; the survival timer stops while paused because deltaTime is 0
@@ -104,13 +93,13 @@ Mission 8 - Pause menu (R6)
 - Menu while paused works because TrialManager.OnDestroy resets timeScale
 - Lesson learned: changes made during Play mode are lost when Play stops
 
-Mission 9 - Best time (R7)
+== Mission 9: Best time (R7) ==
 - PlayerPrefs stores the best survival time under the key "BestTime" (a const string in both scripts to avoid typos)
-- TrialManager.EndTrial reads the saved best (default 0); if this run beats it, saves with SetFloat + Save and shows "New best!"
+- TrialManager.EndTrial reads the saved best (default 0); if this run beats it, saves with SetFloat + PlayerPrefs.Save() and shows "New best!"
 - MainMenu.Start reads the best and shows "Best: X s", or "No trial attempted yet" when nothing is saved
-- Tested: record persists after stopping Play; Edit > Clear All PlayerPrefs resets it
+- Tested in the Editor (Edit > Clear All PlayerPrefs resets it) and in the Mac build: the best time survives quitting and relaunching
 
-Mission 10 - Lighting (R8)
+== Mission 10: Lighting (R8) ==
 - Global Light 2D dimmed to intensity 0.35 with a cool blue color (#9AA0D8) for a moody, moonlit hall
 - SpellBolt prefab: child Spot Light 2D (BoltGlow, violet #B07CFF) so every pooled bolt lights the floor as it flies; inactive bolts' lights switch off with them
 - SpellBolt sprite uses Sprite-Unlit-Default so the bolt itself stays bright in the dark (unlit ignores lights)
@@ -118,3 +107,20 @@ Mission 10 - Lighting (R8)
 - Kept the default light radius because it looked better in testing (design choice)
 - Bug found: first added 3D Spot Lights by mistake; the 2D Renderer ignores 3D lights, so replaced them with Light 2D components
 - UI is unaffected because the Overlay canvas ignores scene lights
+
+== Mission 11: Cleanup, build and submission ==
+- Code check: no Debug.Log, no comments or commented-out code, no public fields (all [SerializeField] private),
+  no stray editor-only usings, no empty Start/Update methods
+- Removed the pool's grow path so the bolt count stays fixed at 20
+- Player Settings: Product Name "Warding Trial", Windowed 1600x900, resizable
+- Mac build into Build/ (ignored by Git), Development Build off
+- Build tested: full loop works, Quit closes the app, best time survives relaunch
+- Zipped the .app, unzipped a copy elsewhere and ran it successfully
+- Unsigned app note: if macOS blocks it, right-click > Open, or System Settings > Privacy & Security > Open Anyway
+
+== AI use (for disclosure) ==
+- Used Claude (AI) to turn the course slides and assignments into a learn-by-doing tutor that taught each concept while I built this game
+- I wrote PlayerMovement, SpellBolt and the first BoltPool myself with AI explanations and review
+- From the final BoltPool onward (BoltPool, StatueCaster, PlayerHit, TrialManager, PauseManager, MainMenu),
+  the AI provided complete code with explanations; I integrated, wired, tested and debugged everything in the Editor and the Mac build
+- Documentation fully generated by AI from these notes and my final scripts
