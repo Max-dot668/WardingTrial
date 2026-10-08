@@ -33,7 +33,7 @@ public class BoltPool : MonoBehaviour
                 return Launch(bolt, position, rotation);
             }
         }
-        return Launch(CreateBolt(), position, rotation);
+        return null;
     }
     private GameObject Launch(GameObject bolt, Vector3 position, Quaternion rotation)
     {
